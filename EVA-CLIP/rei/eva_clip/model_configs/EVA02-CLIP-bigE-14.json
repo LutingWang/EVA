@@ -9,7 +9,7 @@
         "patch_size": 14,
         "eva_model_name": "eva-clip-4b-14-x",
         "drop_path_rate": 0,
-        "xattn": true,
+        "xattn": false,
         "postnorm": true,
         "fusedLN": true
     },

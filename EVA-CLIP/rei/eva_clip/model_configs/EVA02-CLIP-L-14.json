@@ -9,7 +9,7 @@
         "mlp_ratio": 2.6667,
         "patch_size": 14,
         "eva_model_name": "eva-clip-l-14",
-        "xattn": true,
+        "xattn": false,
         "fusedLN": true,
         "rope": true,
         "pt_hw_seq_len": 16,
