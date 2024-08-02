@@ -6,7 +6,6 @@ setup(
     packages=find_packages(include=['eva_clip*']),
     install_requires=[
         'xformers',
-        'git+https://github.com/NVIDIA/apex',
         'timm==0.5.4',
         'tqdm',
         'huggingface_hub',
