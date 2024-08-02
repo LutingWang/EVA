@@ -16,4 +16,7 @@ setup(
         'regex',
     ],
     include_package_data=True,
+    package_data={
+        '': ['eva_clip/bpe_simple_vocab_16e6.txt.gz'],
+    },
 )
