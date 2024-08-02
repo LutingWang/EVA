@@ -5,7 +5,6 @@ setup(
     version='0.0.1',
     packages=find_packages(include=['eva_clip*']),
     install_requires=[
-        'xformers',
         'timm==0.5.4',
         'tqdm',
         'huggingface_hub',

@@ -27,11 +27,6 @@ if os.getenv('ENV_TYPE') == 'deepspeed':
 else:
     from torch.utils.checkpoint import checkpoint
 
-try:
-    import xformers.ops as xops
-except ImportError:
-    xops = None
-    print("Please 'pip install xformers'")
 
 class LayerNormFp32(nn.LayerNorm):
     """Subclass torch's LayerNorm to handle fp16 (by casting to float32 and back)."""

@@ -21,17 +21,6 @@ from .timm_model import TimmModel
 from .eva_vit_model import EVAVisionTransformer
 from .transformer import LayerNorm, QuickGELU, Attention, VisionTransformer, TextTransformer
 
-try:
-    from apex.normalization import FusedLayerNorm
-except:
-    FusedLayerNorm = LayerNorm
-    print("Please 'pip install apex'")
-
-try:
-    import xformers.ops as xops
-except ImportError:
-    xops = None
-    print("Please 'pip install xformers'")
 
 @dataclass
 class CLIPVisionCfg:
@@ -120,7 +109,7 @@ def _build_vision_tower(
             mlp_ratio=vision_cfg.mlp_ratio,
             qkv_bias=vision_cfg.qkv_bias,
             drop_path_rate=vision_cfg.drop_path_rate,
-            norm_layer= partial(FusedLayerNorm, eps=1e-6) if vision_cfg.fusedLN else partial(norm_layer, eps=1e-6),
+            norm_layer=partial(norm_layer, eps=1e-6),
             xattn=vision_cfg.xattn,
             rope=vision_cfg.rope,
             postnorm=vision_cfg.postnorm,
@@ -201,7 +190,7 @@ def _build_text_tower(
             ls_init_value=text_cfg.ls_init_value,
             output_dim=embed_dim,
             act_layer=act_layer,
-            norm_layer= FusedLayerNorm if text_cfg.fusedLN else norm_layer,
+            norm_layer=norm_layer,
             xattn=text_cfg.xattn,
             attn_mask=text_cfg.attn_mask,
         )

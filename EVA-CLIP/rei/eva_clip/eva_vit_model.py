@@ -23,12 +23,6 @@ if os.getenv('ENV_TYPE') == 'deepspeed':
 else:
     from torch.utils.checkpoint import checkpoint
 
-try:
-    import xformers.ops as xops
-except ImportError:
-    xops = None
-    print("Please 'pip install xformers'")
-
 
 class DropPath(nn.Module):
     """Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).
