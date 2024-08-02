@@ -311,12 +311,16 @@ class PatchEmbed(nn.Module):
 
         self.proj = nn.Conv2d(in_chans, embed_dim, kernel_size=patch_size, stride=patch_size)
 
-    def forward(self, x, **kwargs):
+    def forward(self, x, return_wh: bool = False, **kwargs):
         B, C, H, W = x.shape
         # FIXME look at relaxing size constraints
         assert H == self.img_size[0] and W == self.img_size[1], \
             f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
-        x = self.proj(x).flatten(2).transpose(1, 2)
+        x = self.proj(x)
+        _, _, h, w = x.shape
+        x = x.flatten(2).transpose(1, 2)
+        if return_wh:
+            return x, (w, h)
         return x
 
 
@@ -480,9 +484,9 @@ class EVAVisionTransformer(nn.Module):
         self.num_classes = num_classes
         self.head = nn.Linear(self.embed_dim, num_classes) if num_classes > 0 else nn.Identity()
 
-    def forward_features(self, x, return_all_features=False):
+    def forward_features(self, x, return_all_features=False, return_2d: bool | None = None):
         
-        x = self.patch_embed(x)
+        x, wh = self.patch_embed(x, True)
         batch_size, seq_len, _ = x.size()
 
         cls_tokens = self.cls_token.expand(batch_size, -1, -1)  # stole cls_tokens impl from Phil Wang, thanks
@@ -509,6 +513,13 @@ class EVAVisionTransformer(nn.Module):
             else:
                 x = blk(x, rel_pos_bias=rel_pos_bias)
 
+        if return_2d is not None:
+            x = x[:, 1:]
+            if return_2d:
+                import einops
+                w, h = wh
+                x = einops.rearrange(x, 'b (h w) c -> b c h w', h=h, w=w)
+            return x
         if not return_all_features:
             x = self.norm(x)
             if self.fc_norm is not None:
